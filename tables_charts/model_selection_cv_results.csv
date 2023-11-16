@@ -1,0 +1,6 @@
+model,balanced_accuracy,f1,average_precision
+rfc,0.705,0.432,0.471
+hgb,0.71,0.482,0.486
+knn,0.626,0.384,0.317
+log,0.684,0.414,0.305
+xgb,0.648,0.378,0.46
