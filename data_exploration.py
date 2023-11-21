@@ -1,39 +1,47 @@
 import pandas as pd
 from matplotlib import pyplot as plt
+from data_preprocessing import read_data
 
-data = pd.read_excel(
-    io='data/ecoshare_sales_v3.xlsx',
-    sheet_name='Data',
-    header=0,
-    true_values=['Y'],
-    false_values=['N']
-)
+data = read_data()
 
 data['order_day'] = pd.to_datetime(data['order_day'])
 data.sort_values(by='order_day', ascending=True, inplace=True)
-data['year_month'] = data['order_day'].dt.strftime('%Y-%m')
+data['year_quarter'] = data['order_day'].dt.to_period('Q')
 
-# monthly call volume chart
+colors = {
+    'train': 'b',
+    'test': 'r'
+}
+    
+# quarterly call volume chart
 ax = data.groupby(
-    by='year_month'
+    by='year_quarter'
 ).size().plot(
     kind='bar',
-    title='Monthly Call Volume',
-    xlabel='Year-Month',
-    ylabel='Call Volume'
+    title='Quarterly Call Volume',
+    xlabel='Year Quarter',
+    ylabel='Call Volume',
+    color=[colors[i] for i in data.groupby(by='year_quarter')['set'].head(1)]
 )
 ax.set_xticks(ax.get_xticks()[::2])
+labels = data['set'].unique()
+handles = [plt.Rectangle((0,0),1,1, color=colors[l]) for l in labels]
+plt.legend(handles, labels, title='Dataset')
 plt.tight_layout()
-plt.savefig('tables_charts/monthly_call_volume.png')
+plt.savefig('tables_charts/quarterly_call_volume.png')
 plt.clf()
 
-# monthly EcoShare conversions
-ax = data.groupby(by='year_month')['accept'].sum().plot(
+# quarterly EcoShare conversions
+ax = data.groupby(by='year_quarter')['accept'].sum().plot(
     kind='bar',
-    title='Monthly EcoShare Conversions',
-    xlabel='Year-Month',
-    ylabel='Conversions'
+    title='Quarterly EcoShare Conversions',
+    xlabel='Year Quarter',
+    ylabel='Conversions',
+    color=[colors[i] for i in data.groupby(by='year_quarter')['set'].head(1)]
 )
 ax.set_xticks(ax.get_xticks()[::2])
+labels = data['set'].unique()
+handles = [plt.Rectangle((0,0),1,1, color=colors[l]) for l in labels]
+plt.legend(handles, labels, title='Dataset')
 plt.tight_layout()
-plt.savefig('tables_charts/monthly_conversions.png')
+plt.savefig('tables_charts/quarterly_conversions.png')

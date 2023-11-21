@@ -6,7 +6,7 @@ from sklearn.metrics import (
     balanced_accuracy_score,
     average_precision_score,
     PrecisionRecallDisplay,
-    confusion_matrix
+    ConfusionMatrixDisplay
 )
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -64,6 +64,15 @@ if __name__ == "__main__":
     )
     _ = display.ax_.set_title("ROC Curve")
     plt.savefig('tables_charts/roc_curve.png')
+
+    # plot confusion matrix
+    display = ConfusionMatrixDisplay.from_estimator(
+        clf,
+        X_test,
+        y_test
+    )
+    _ = display.ax_.set_title('Confusion Matrix')
+    plt.savefig('tables_charts/confusion_matrix.png')
 
     # determine permutation feature importance
     result = permutation_importance(
